@@ -85,3 +85,7 @@ import { Mongodb } from "simple-icons-astro"; // this will cause vite to bundle 
 
 * Sufficient color contrast for text and interactive elements.
 * Focus outlines using `ring-teal-400`.
+
+**Class names**
+
+Use `tailwind-merge`, `class-variance-authority` or `clsx` to handle complex rules.
