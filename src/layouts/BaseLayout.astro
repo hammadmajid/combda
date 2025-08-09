@@ -1,0 +1,42 @@
+---
+import "../styles/global.css"
+
+export interface Props {
+  title?: string;
+  description?: string;
+  keywords?: string;
+}
+
+const {
+  title = "Combda - Premier IT Services & Solutions",
+  description = "Expert IT infrastructure, cloud migration, cybersecurity, and DevOps consulting services. Transform your business with reliable technology solutions.",
+  keywords = "IT services, cloud migration, cybersecurity, DevOps, network architecture, infrastructure management"
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+
+    <title>{title}</title>
+  </head>
+  <body class="bg-teal-100 min-h-screen">
+    <slot />
+  </body>
+</html>

@@ -1,0 +1,73 @@
+---
+import ChevronRight from "@lucide/astro/icons/chevron-right";
+import ShieldIcon from "@lucide/astro/icons/shield";
+import CloudIcon from "@lucide/astro/icons/cloud";
+import Cog from "@lucide/astro/icons/cog";
+---
+
+<section class="relative py-20 lg:py-32">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center">
+      <!-- Main Headline -->
+      <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-800 mb-6 tracking-tight">
+        Transform Your Business with
+        <span class="text-teal-600">Expert IT Solutions</span>
+      </h1>
+
+      <!-- Subheadline -->
+      <p class="text-lg md:text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+        From infrastructure setup to cloud migration, cybersecurity to DevOps automation—we provide comprehensive IT services that drive growth and innovation.
+      </p>
+
+      <!-- CTA Buttons -->
+      <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
+        <a
+          href="#contact"
+          class="bg-teal-600 text-white px-8 py-4 rounded-xl text-lg font-medium hover:bg-teal-700 transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center gap-2"
+        >
+          Get Started Today
+          <ChevronRight class="w-5 h-5" />
+        </a>
+        <a
+          href="#services"
+          class="bg-white text-teal-600 px-8 py-4 rounded-xl text-lg font-medium border-2 border-teal-600 hover:bg-teal-50 transition-all duration-300 ease-in-out"
+        >
+          Explore Services
+        </a>
+      </div>
+
+      <!-- Feature Icons -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+        <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
+          <div class="flex justify-center mb-4">
+            <div class="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
+              <ShieldIcon class="w-6 h-6 text-teal-600" />
+            </div>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-800 mb-2">Cybersecurity Excellence</h3>
+          <p class="text-gray-600 text-sm">Advanced security solutions and compliance audits to protect your business assets.</p>
+        </div>
+
+        <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
+          <div class="flex justify-center mb-4">
+            <div class="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
+              <CloudIcon class="w-6 h-6 text-teal-600" />
+            </div>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-800 mb-2">Cloud Migration</h3>
+          <p class="text-gray-600 text-sm">Seamless cloud transitions with optimized hosting solutions for modern businesses.</p>
+        </div>
+
+        <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
+          <div class="flex justify-center mb-4">
+            <div class="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
+              <Cog class="w-6 h-6 text-teal-600" />
+            </div>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-800 mb-2">DevOps Automation</h3>
+          <p class="text-gray-600 text-sm">Streamlined development processes and infrastructure automation for efficiency.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
