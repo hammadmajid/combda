@@ -1,0 +1,259 @@
+# Ansible Playbook for Combda Site Deployment
+# This playbook handles deployment of the Combda static site to the production server
+# It pulls the latest code, builds the site, and restarts Caddy web server
+#
+# Usage: ansible-playbook -i inventory deploy.yml
+# This is designed to be run by GitHub Actions on every push to main branch
+
+---
+- name: Deploy Combda Static Site
+  hosts: all
+  vars:
+    # Deployment configuration - customize these variables as needed
+    repository_url: "https://github.com/{{ github_repository }}"  # Set via GitHub Actions
+    site_directory: "/var/www/combda"                             # Where the site lives on server
+    build_directory: "{{ site_directory }}/dist"                 # Where built files go
+    deploy_user: "{{ ansible_user }}"                            # User running the deployment
+    node_env: "production"                                        # Node.js environment
+    
+  tasks:
+    # Pre-deployment Checks
+    # Verify the server is ready and has required dependencies
+    - name: Check if site directory exists
+      stat:
+        path: "{{ site_directory }}"
+      register: site_dir_stat
+      tags: ['validation']
+
+    - name: Fail if site directory doesn't exist
+      fail:
+        msg: "Site directory {{ site_directory }} does not exist. Run setup.yml first!"
+      when: not site_dir_stat.stat.exists
+      tags: ['validation']
+
+    - name: Check Node.js is installed
+      command: node --version
+      register: node_check
+      changed_when: false
+      failed_when: node_check.rc != 0
+      tags: ['validation']
+
+    - name: Check Caddy is installed and running
+      systemd:
+        name: caddy
+      register: caddy_status
+      failed_when: caddy_status.status.ActiveState != "active"
+      tags: ['validation']
+
+    # Code Repository Management
+    # Handle both initial clone and subsequent updates
+    - name: Check if git repository exists
+      stat:
+        path: "{{ site_directory }}/.git"
+      register: git_repo_stat
+      tags: ['git']
+
+    - name: Clone repository (first deployment)
+      git:
+        repo: "{{ repository_url }}"
+        dest: "{{ site_directory }}"
+        version: main
+        force: yes  # Overwrite any local changes
+      when: not git_repo_stat.stat.exists
+      become: yes
+      become_user: "{{ deploy_user }}"
+      tags: ['git', 'clone']
+
+    - name: Pull latest changes (subsequent deployments)
+      git:
+        repo: "{{ repository_url }}"
+        dest: "{{ site_directory }}"
+        version: main
+        force: yes  # Discard any local changes
+      when: git_repo_stat.stat.exists
+      become: yes
+      become_user: "{{ deploy_user }}"
+      register: git_pull_result
+      tags: ['git', 'update']
+
+    - name: Display git pull results
+      debug:
+        msg: "Git repository updated. Latest commit: {{ git_pull_result.after | default('N/A') }}"
+      when: git_pull_result is defined
+      tags: ['git']
+
+    # Dependency Management
+    # Install/update Node.js dependencies efficiently
+    - name: Check if package.json exists
+      stat:
+        path: "{{ site_directory }}/package.json"
+      register: package_json_stat
+      tags: ['dependencies']
+
+    - name: Fail if package.json is missing
+      fail:
+        msg: "package.json not found in {{ site_directory }}. This doesn't appear to be a Node.js project!"
+      when: not package_json_stat.stat.exists
+      tags: ['dependencies']
+
+    - name: Install Node.js dependencies
+      npm:
+        path: "{{ site_directory }}"
+        state: present
+        production: yes  # Only install production dependencies
+      become: yes
+      become_user: "{{ deploy_user }}"
+      environment:
+        NODE_ENV: "{{ node_env }}"
+      tags: ['dependencies', 'npm']
+
+    # Build Process
+    # Build the static site for production
+    - name: Clean previous build directory
+      file:
+        path: "{{ build_directory }}"
+        state: absent
+      become: yes
+      tags: ['build', 'cleanup']
+
+    - name: Build the static site
+      npm:
+        path: "{{ site_directory }}"
+        script: build
+      become: yes
+      become_user: "{{ deploy_user }}"
+      environment:
+        NODE_ENV: "{{ node_env }}"
+      register: build_result
+      tags: ['build']
+
+    - name: Verify build completed successfully
+      stat:
+        path: "{{ build_directory }}/index.html"
+      register: build_check
+      tags: ['build', 'validation']
+
+    - name: Fail if build output is missing
+      fail:
+        msg: "Build failed - no index.html found in {{ build_directory }}"
+      when: not build_check.stat.exists
+      tags: ['build', 'validation']
+
+    # File Permissions and Ownership
+    # Ensure proper permissions for web server access
+    - name: Set correct ownership on site directory
+      file:
+        path: "{{ site_directory }}"
+        owner: "{{ deploy_user }}"
+        group: "{{ deploy_user }}"
+        recurse: yes
+      become: yes
+      tags: ['permissions']
+
+    - name: Set correct permissions on build directory
+      file:
+        path: "{{ build_directory }}"
+        mode: '0755'
+        recurse: yes
+      become: yes
+      tags: ['permissions']
+
+    - name: Ensure web server can read all files
+      find:
+        paths: "{{ build_directory }}"
+        file_type: file
+      register: site_files
+      tags: ['permissions']
+
+    - name: Set read permissions on all site files
+      file:
+        path: "{{ item.path }}"
+        mode: '0644'
+      with_items: "{{ site_files.files }}"
+      become: yes
+      tags: ['permissions']
+
+    # Service Management
+    # Reload Caddy to pick up any configuration changes and ensure it's serving the new content
+    - name: Test Caddy configuration
+      command: caddy validate --config /etc/caddy/Caddyfile
+      register: caddy_validate
+      become: yes
+      tags: ['caddy', 'validation']
+
+    - name: Reload Caddy web server
+      systemd:
+        name: caddy
+        state: reloaded
+      become: yes
+      when: caddy_validate.rc == 0
+      tags: ['caddy', 'reload']
+
+    - name: Restart Caddy if reload fails
+      systemd:
+        name: caddy
+        state: restarted
+      become: yes
+      when: caddy_validate.rc != 0
+      tags: ['caddy', 'restart']
+
+    # Post-deployment Verification
+    # Verify the deployment was successful
+    - name: Wait for Caddy to be ready
+      wait_for:
+        port: 80
+        host: localhost
+        delay: 2
+        timeout: 30
+      tags: ['verification']
+
+    - name: Test website accessibility
+      uri:
+        url: "http://localhost"
+        method: GET
+        status_code: 200
+      register: website_test
+      retries: 3
+      delay: 5
+      tags: ['verification']
+
+    - name: Display deployment success message
+      debug:
+        msg: |
+          🎉 Deployment completed successfully!
+          
+          Website is accessible at: http://{{ ansible_host }}
+          Build directory: {{ build_directory }}
+          Latest commit: {{ git_pull_result.after | default('N/A') }}
+          
+          Deployment timestamp: {{ ansible_date_time.iso8601 }}
+      tags: ['verification']
+
+    # Cleanup and Maintenance
+    # Clean up unnecessary files to save disk space
+    - name: Clean npm cache
+      npm:
+        path: "{{ site_directory }}"
+        state: present
+        ci: yes
+      become: yes
+      become_user: "{{ deploy_user }}"
+      tags: ['cleanup']
+
+    - name: Remove development dependencies to save space
+      file:
+        path: "{{ site_directory }}/node_modules"
+        state: absent
+      become: yes
+      when: ansible_env.KEEP_NODE_MODULES is not defined
+      tags: ['cleanup', 'optional']
+
+    - name: Reinstall only production dependencies
+      npm:
+        path: "{{ site_directory }}"
+        state: present
+        production: yes
+      become: yes
+      become_user: "{{ deploy_user }}"
+      when: ansible_env.KEEP_NODE_MODULES is not defined
+      tags: ['cleanup', 'optional']

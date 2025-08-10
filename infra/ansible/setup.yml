@@ -1,0 +1,317 @@
+# Ansible Playbook for Initial Server Setup
+# This playbook configures a fresh Ubuntu server for hosting the Combda static site
+# It installs and configures Caddy web server, Node.js, and sets up the deployment environment
+#
+# Usage: ansible-playbook -i inventory setup.yml
+# Run this ONCE after creating the server with Terraform
+
+---
+- name: Initial Server Setup for Combda Static Site
+  hosts: all
+  become: yes  # Run tasks with sudo privileges
+  vars:
+    # Configuration variables - modify these as needed
+    site_user: "{{ ansible_user }}"                    # User who will own the website files
+    site_directory: "/var/www/combda"                  # Where the built site will be stored
+    caddy_config_dir: "/etc/caddy"                     # Caddy configuration directory
+    node_version: "18"                                 # Node.js version to install (LTS)
+    
+  tasks:
+    # System Update and Security
+    # Always start with system updates for security and stability
+    - name: Update apt package cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600  # Cache valid for 1 hour to avoid repeated updates
+      tags: ['system', 'security']
+
+    - name: Upgrade all packages to latest versions
+      apt:
+        upgrade: dist
+        autoremove: yes         # Remove orphaned packages
+        autoclean: yes          # Clean package cache
+      tags: ['system', 'security']
+
+    # Essential System Packages
+    # Install fundamental tools needed for operation and troubleshooting
+    - name: Install essential system packages
+      apt:
+        name:
+          - curl              # For downloading files and API calls
+          - wget              # Alternative download tool
+          - git               # Version control for code deployment
+          - unzip             # Archive extraction
+          - software-properties-common  # For managing package repositories
+          - apt-transport-https         # Secure package downloads
+          - ca-certificates            # SSL/TLS certificate validation
+          - gnupg                      # GPG key management
+          - lsb-release               # System information detection
+          - ufw                       # Uncomplicated Firewall
+          - fail2ban                  # Intrusion prevention system
+        state: present
+      tags: ['system', 'packages']
+
+    # Firewall Configuration
+    # Set up basic firewall rules for security
+    - name: Configure UFW firewall rules
+      ufw:
+        rule: "{{ item.rule }}"
+        port: "{{ item.port }}"
+        proto: "{{ item.proto | default('tcp') }}"
+      loop:
+        - { rule: 'allow', port: '22' }     # SSH access
+        - { rule: 'allow', port: '80' }     # HTTP traffic
+        - { rule: 'allow', port: '443' }    # HTTPS traffic
+      tags: ['security', 'firewall']
+
+    - name: Enable UFW firewall
+      ufw:
+        state: enabled
+        policy: deny     # Deny all traffic except explicitly allowed
+      tags: ['security', 'firewall']
+
+    # Fail2ban Configuration for SSH Protection
+    # Protect against brute force attacks
+    - name: Configure fail2ban for SSH protection
+      copy:
+        dest: /etc/fail2ban/jail.local
+        content: |
+          [DEFAULT]
+          # Ban time: 10 minutes for first offense
+          bantime = 600
+          
+          # Time window to count failures: 10 minutes
+          findtime = 600
+          
+          # Number of failures before ban
+          maxretry = 5
+          
+          [sshd]
+          enabled = true
+          port = ssh
+          filter = sshd
+          logpath = /var/log/auth.log
+      notify: restart fail2ban
+      tags: ['security']
+
+    # Node.js Installation
+    # Install Node.js for building the Astro site
+    - name: Add NodeSource repository key
+      apt_key:
+        url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+        state: present
+      tags: ['nodejs']
+
+    - name: Add NodeSource repository
+      apt_repository:
+        repo: "deb https://deb.nodesource.com/node_{{ node_version }}.x {{ ansible_distribution_release }} main"
+        state: present
+      tags: ['nodejs']
+
+    - name: Install Node.js
+      apt:
+        name: nodejs
+        state: present
+        update_cache: yes
+      tags: ['nodejs']
+
+    - name: Verify Node.js installation
+      command: node --version
+      register: node_version_output
+      changed_when: false  # This task doesn't change anything
+      tags: ['nodejs']
+
+    - name: Display Node.js version
+      debug:
+        msg: "Installed Node.js version: {{ node_version_output.stdout }}"
+      tags: ['nodejs']
+
+    # Caddy Web Server Installation
+    # Caddy provides automatic HTTPS and modern web server features
+    - name: Add Caddy repository key
+      apt_key:
+        url: https://dl.cloudsmith.io/public/caddy/stable/gpg.key
+        state: present
+      tags: ['caddy']
+
+    - name: Add Caddy repository
+      apt_repository:
+        repo: "deb https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version main"
+        state: present
+      tags: ['caddy']
+
+    - name: Install Caddy web server
+      apt:
+        name: caddy
+        state: present
+        update_cache: yes
+      tags: ['caddy']
+
+    # User and Directory Setup
+    # Create necessary directories and set proper permissions
+    - name: Create website directory
+      file:
+        path: "{{ site_directory }}"
+        state: directory
+        owner: "{{ site_user }}"
+        group: "{{ site_user }}"
+        mode: '0755'
+      tags: ['setup', 'directories']
+
+    - name: Create Caddy configuration directory
+      file:
+        path: "{{ caddy_config_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+      tags: ['caddy', 'directories']
+
+    # Caddy Configuration
+    # Configure Caddy to serve our static site with automatic HTTPS
+    - name: Create Caddyfile configuration
+      copy:
+        dest: "{{ caddy_config_dir }}/Caddyfile"
+        content: |
+          # Caddyfile for Combda Static Site
+          # Caddy automatically handles HTTPS certificates via Let's Encrypt
+          
+          # Serve on all interfaces, port 80 (will auto-redirect to HTTPS)
+          :80 {
+              # Root directory where built site files are located
+              root * {{ site_directory }}/dist
+              
+              # Enable file server for static content
+              file_server
+              
+              # Handle client-side routing (for SPAs)
+              try_files {path} /index.html
+              
+              # Security headers for better protection
+              header {
+                  # Prevent clickjacking
+                  X-Frame-Options DENY
+                  
+                  # Prevent MIME type sniffing
+                  X-Content-Type-Options nosniff
+                  
+                  # Enable XSS protection
+                  X-XSS-Protection "1; mode=block"
+                  
+                  # Referrer policy for privacy
+                  Referrer-Policy strict-origin-when-cross-origin
+              }
+              
+              # Enable gzip compression for better performance
+              encode gzip
+              
+              # Cache static assets
+              @static {
+                  file
+                  path *.css *.js *.png *.jpg *.jpeg *.gif *.ico *.svg *.woff *.woff2 *.ttf *.eot
+              }
+              header @static Cache-Control max-age=31536000
+          }
+        owner: root
+        group: root
+        mode: '0644'
+      notify: restart caddy
+      tags: ['caddy', 'configuration']
+
+    # Create a simple placeholder page until deployment
+    - name: Create placeholder index.html
+      copy:
+        dest: "{{ site_directory }}/dist/index.html"
+        content: |
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Combda - Server Ready</title>
+              <style>
+                  body {
+                      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                      color: white;
+                      text-align: center;
+                      padding: 2rem;
+                      margin: 0;
+                      min-height: 100vh;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                  }
+                  .container {
+                      max-width: 600px;
+                      background: rgba(255, 255, 255, 0.1);
+                      padding: 3rem;
+                      border-radius: 20px;
+                      backdrop-filter: blur(10px);
+                      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+                  }
+                  h1 { font-size: 3rem; margin-bottom: 1rem; }
+                  p { font-size: 1.2rem; line-height: 1.6; }
+                  .success { color: #4ade80; }
+                  code {
+                      background: rgba(0, 0, 0, 0.3);
+                      padding: 0.5rem 1rem;
+                      border-radius: 8px;
+                      font-family: 'SF Mono', Monaco, monospace;
+                  }
+              </style>
+          </head>
+          <body>
+              <div class="container">
+                  <h1 class="success">🚀 Server Ready!</h1>
+                  <p>Your Combda server is successfully configured and running on Google Cloud.</p>
+                  <p>Caddy web server is installed and configured with automatic HTTPS.</p>
+                  <p>To deploy your site, push to your repository and let GitHub Actions handle the rest!</p>
+              </div>
+          </body>
+          </html>
+        owner: "{{ site_user }}"
+        group: "{{ site_user }}"
+        mode: '0644'
+      tags: ['setup', 'placeholder']
+
+    - name: Create dist directory
+      file:
+        path: "{{ site_directory }}/dist"
+        state: directory
+        owner: "{{ site_user }}"
+        group: "{{ site_user }}"
+        mode: '0755'
+      tags: ['setup', 'directories']
+
+    # Service Management
+    # Ensure Caddy starts automatically and is running
+    - name: Enable and start Caddy service
+      systemd:
+        name: caddy
+        enabled: yes
+        state: started
+        daemon_reload: yes
+      tags: ['caddy', 'services']
+
+    - name: Enable and start fail2ban service
+      systemd:
+        name: fail2ban
+        enabled: yes
+        state: started
+      tags: ['security', 'services']
+
+  # Handlers for service restarts
+  # These run only when notified by tasks that make changes
+  handlers:
+    - name: restart caddy
+      systemd:
+        name: caddy
+        state: restarted
+      tags: ['caddy']
+
+    - name: restart fail2ban
+      systemd:
+        name: fail2ban
+        state: restarted
+      tags: ['security']
