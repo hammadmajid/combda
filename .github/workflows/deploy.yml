@@ -1,0 +1,222 @@
+# GitHub Actions Workflow for Combda Static Site Deployment
+# This workflow automatically deploys the Combda site to Google Cloud when changes are pushed to main
+# It uses Ansible for configuration management and deployment automation
+#
+# Triggers:
+# - Push to main branch
+# - Manual workflow dispatch (for emergency deployments)
+#
+# Prerequisites:
+# 1. Server must be provisioned with Terraform
+# 2. Server must be configured with ansible/setup.yml
+# 3. GitHub secrets must be configured (see secrets section below)
+
+name: Deploy to Production
+
+# Workflow trigger configuration
+on:
+  # Automatic deployment on main branch changes
+  push:
+    branches: [ main ]
+    # Only deploy when actual source code changes, not just documentation
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+      - '*.md'
+      - '.gitignore'
+      - 'LICENSE'
+  
+  # Allow manual deployment via GitHub UI
+  workflow_dispatch:
+    inputs:
+      deploy_environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+        - production
+        - staging
+
+# Define environment variables used across all jobs
+env:
+  NODE_VERSION: '18'                    # Node.js version for consistent builds
+  ANSIBLE_HOST_KEY_CHECKING: 'false'   # Disable host key checking for automation
+  ANSIBLE_STDOUT_CALLBACK: 'yaml'      # Better output formatting
+  
+# Define workflow jobs
+jobs:
+  # Build Job: Compile and test the static site
+  build:
+    name: Build and Test Site
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Checkout source code from repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for better caching and analysis
+          
+      # Set up Node.js environment for building the site
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'  # Cache npm dependencies for faster builds
+          
+      # Install project dependencies
+      - name: Install Dependencies
+        run: |
+          # Use npm ci for faster, more reliable builds in CI environments
+          npm ci --prefer-offline --no-audit
+          
+      # Run linting and type checking for code quality
+      - name: Run Code Quality Checks
+        run: |
+          # Run Astro's built-in type checking
+          npm run check
+          
+      # Build the static site for production
+      - name: Build Production Site
+        run: |
+          # Build the site with production optimizations
+          npm run build
+          
+      # Upload build artifacts for deployment job
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-build
+          path: dist/
+          retention-days: 7  # Keep artifacts for a week
+          compression-level: 6  # Good compression vs speed balance
+
+  # Deploy Job: Deploy the built site to production server
+  deploy:
+    name: Deploy to Production Server
+    runs-on: ubuntu-latest
+    needs: build  # Only run after successful build
+    environment: production  # Use GitHub environment protection rules
+    
+    steps:
+      # Checkout repository for Ansible playbooks
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        
+      # Download build artifacts from build job
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: site-build
+          path: dist/
+          
+      # Set up Python environment for Ansible
+      - name: Setup Python for Ansible
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          
+      # Install Ansible and required dependencies
+      - name: Install Ansible
+        run: |
+          # Install Ansible and community collections
+          pip install ansible>=8.0.0
+          ansible-galaxy collection install community.general
+          
+      # Configure SSH key for server access
+      - name: Setup SSH Key
+        run: |
+          # Create SSH directory with correct permissions
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          
+          # Install the private SSH key from GitHub secrets
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          
+          # Add server to known hosts to avoid host key verification
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+          
+      # Create Ansible inventory dynamically
+      - name: Create Ansible Inventory
+        run: |
+          # Create inventory file with server details
+          cat > inventory << EOF
+          [production]
+          combda-server ansible_host=${{ secrets.SERVER_IP }} ansible_user=${{ secrets.SSH_USER }}
+          
+          [production:vars]
+          # Pass GitHub repository information to Ansible
+          github_repository=${{ github.repository }}
+          deployment_sha=${{ github.sha }}
+          deployment_ref=${{ github.ref }}
+          EOF
+          
+          # Verify inventory is valid
+          ansible-inventory -i inventory --list
+          
+      # Test server connectivity before deployment
+      - name: Test Server Connection
+        run: |
+          # Ping server to verify connectivity and SSH access
+          ansible -i inventory production -m ping
+          
+          # Check server basic info
+          ansible -i inventory production -m setup -a "filter=ansible_distribution*"
+          
+      # Run deployment playbook
+      - name: Deploy with Ansible
+        run: |
+          # Run the deployment playbook with verbose output
+          ansible-playbook -i inventory ansible/deploy.yml \
+            --extra-vars "github_repository=${{ github.repository }}" \
+            --verbose
+        env:
+          # Pass environment variables to Ansible
+          ANSIBLE_FORCE_COLOR: 'true'
+          
+      # Verify deployment success
+      - name: Verify Deployment
+        run: |
+          # Test that the website is accessible
+          curl -f -s -o /dev/null -w "%{http_code}" http://${{ secrets.SERVER_IP }} || exit 1
+          
+          # Check response time and basic functionality
+          response_time=$(curl -o /dev/null -s -w "%{time_total}" http://${{ secrets.SERVER_IP }})
+          echo "Website response time: ${response_time}s"
+          
+      # Notify on deployment completion
+      - name: Deployment Success Notification
+        if: success()
+        run: |
+          echo "🎉 Deployment completed successfully!"
+          echo "Website URL: http://${{ secrets.SERVER_IP }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Deployed by: ${{ github.actor }}"
+          
+      # Cleanup on failure
+      - name: Cleanup on Failure
+        if: failure()
+        run: |
+          echo "❌ Deployment failed!"
+          echo "Check the logs above for detailed error information."
+          
+          # Optionally, you could run a rollback playbook here
+          # ansible-playbook -i inventory ansible/rollback.yml
+
+# Required GitHub Secrets:
+# - SSH_PRIVATE_KEY: Private SSH key for server access (companion to public key used in Terraform)
+# - SSH_USER: Username for SSH access (should match terraform variable ssh_user)
+# - SERVER_IP: IP address of the production server (output from Terraform)
+#
+# To set these secrets:
+# 1. Go to your GitHub repository settings
+# 2. Navigate to Secrets and variables > Actions
+# 3. Add each secret with the appropriate value
+#
+# Example values:
+# SSH_PRIVATE_KEY: Contents of ~/.ssh/id_rsa (the private key)
+# SSH_USER: combda (or whatever you set in terraform.tfvars)
+# SERVER_IP: 34.123.45.67 (the static IP from Terraform output)
