@@ -1,0 +1,61 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<BaseLayout
+  title="About - Combda"
+  description="Learn about Combda's mission, values, and team. Discover how we deliver expert IT infrastructure and technology solutions."
+>
+  <Navbar />
+  <main class="min-h-screen bg-teal-100">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="bg-white rounded-xl shadow-lg p-8">
+        <h1 class="text-4xl font-bold text-gray-800 mb-6">About Combda</h1>
+        
+        <div class="prose prose-lg max-w-none">
+          <p class="text-gray-600 mb-6">
+            Combda is a premier IT services company dedicated to transforming businesses through 
+            innovative technology solutions. We specialize in providing comprehensive IT infrastructure, 
+            cloud migration, cybersecurity, and DevOps consulting services.
+          </p>
+          
+          <h2 class="text-2xl font-semibold text-gray-800 mb-4">Our Mission</h2>
+          <p class="text-gray-600 mb-6">
+            To empower businesses with reliable, scalable, and secure technology solutions that 
+            drive growth and operational excellence. We believe in building long-term partnerships 
+            with our clients, ensuring their technology infrastructure evolves with their business needs.
+          </p>
+          
+          <h2 class="text-2xl font-semibold text-gray-800 mb-4">Our Values</h2>
+          <ul class="text-gray-600 mb-6 space-y-2">
+            <li><strong>Excellence:</strong> We deliver high-quality solutions that exceed expectations</li>
+            <li><strong>Innovation:</strong> We stay ahead of technology trends to provide cutting-edge solutions</li>
+            <li><strong>Reliability:</strong> Our clients can count on us for consistent, dependable service</li>
+            <li><strong>Partnership:</strong> We work collaboratively with our clients as trusted advisors</li>
+          </ul>
+          
+          <h2 class="text-2xl font-semibold text-gray-800 mb-4">Why Choose Combda?</h2>
+          <p class="text-gray-600 mb-6">
+            With years of experience in the IT industry, our team brings deep expertise and a 
+            proven track record of successful implementations. We understand that every business 
+            is unique, which is why we tailor our solutions to meet your specific requirements 
+            and budget constraints.
+          </p>
+          
+          <div class="bg-teal-50 p-6 rounded-xl border border-teal-200">
+            <h3 class="text-xl font-semibold text-teal-800 mb-2">Ready to Transform Your IT Infrastructure?</h3>
+            <p class="text-teal-700 mb-4">
+              Let's discuss how Combda can help your business leverage technology for growth and success.
+            </p>
+            <a href="#contact" class="bg-teal-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-teal-700 transition-all duration-300 ease-in-out inline-block">
+              Get in Touch
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>
