@@ -176,8 +176,8 @@
           # Caddyfile for Combda Static Site
           # Caddy automatically handles HTTPS certificates via Let's Encrypt
           
-          # Serve on all interfaces, port 80 (will auto-redirect to HTTPS)
-          :80 {
+          # Main site with automatic HTTPS
+          combda.site {
               # Root directory where built site files are located
               root * {{ site_directory }}/dist
               
@@ -282,15 +282,6 @@
         group: "{{ site_user }}"
         mode: '0644'
       tags: ['setup', 'placeholder']
-
-    - name: Create dist directory
-      file:
-        path: "{{ site_directory }}/dist"
-        state: directory
-        owner: "{{ site_user }}"
-        group: "{{ site_user }}"
-        mode: '0755'
-      tags: ['setup', 'directories']
 
     # Service Management
     # Ensure Caddy starts automatically and is running
