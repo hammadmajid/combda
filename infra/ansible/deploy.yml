@@ -97,9 +97,9 @@
       tags: ['build', 'cleanup']
 
     - name: Build the static site
-      npm:
-        path: "{{ site_directory }}"
-        script: build
+      command: npm run build
+      args:
+        chdir: "{{ site_directory }}"
       become: yes
       become_user: "{{ deploy_user }}"
       environment:
