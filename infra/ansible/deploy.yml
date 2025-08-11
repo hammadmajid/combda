@@ -19,18 +19,6 @@
   tasks:
     # Pre-deployment Checks
     # Verify the server is ready and has required dependencies
-    - name: Check if site directory exists
-      stat:
-        path: "{{ site_directory }}"
-      register: site_dir_stat
-      tags: ['validation']
-
-    - name: Fail if site directory doesn't exist
-      fail:
-        msg: "Site directory {{ site_directory }} does not exist. Run setup.yml first!"
-      when: not site_dir_stat.stat.exists
-      tags: ['validation']
-
     - name: Check Node.js is installed
       command: node --version
       register: node_check
@@ -47,12 +35,6 @@
 
     # Code Repository Management
     # Handle both initial clone and subsequent updates
-    - name: Check if git repository exists
-      stat:
-        path: "{{ site_directory }}/.git"
-      register: git_repo_stat
-      tags: ['git']
-
     - name: Clone repository (first deployment)
       git:
         repo: "{{ repository_url }}"
@@ -70,7 +52,6 @@
         dest: "{{ site_directory }}"
         version: main
         force: yes  # Discard any local changes
-      when: git_repo_stat.stat.exists
       become: yes
       become_user: "{{ deploy_user }}"
       register: git_pull_result
@@ -100,7 +81,6 @@
       npm:
         path: "{{ site_directory }}"
         state: present
-        production: yes  # Only install production dependencies
       become: yes
       become_user: "{{ deploy_user }}"
       environment:
