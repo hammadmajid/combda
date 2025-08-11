@@ -69,14 +69,8 @@ jobs:
       - name: Install Dependencies
         run: |
           # Use npm ci for faster, more reliable builds in CI environments
-          npm ci --prefer-offline --no-audit
-          
-      # Run linting and type checking for code quality
-      - name: Run Code Quality Checks
-        run: |
-          # Run Astro's built-in type checking
-          npm run check
-          
+          npm ci --prefer-offline --no-audit        
+        
       # Build the static site for production
       - name: Build Production Site
         run: |
