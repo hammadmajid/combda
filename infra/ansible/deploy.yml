@@ -187,16 +187,6 @@
         timeout: 30
       tags: ['verification']
 
-    - name: Test website accessibility
-      uri:
-        url: "http://localhost"
-        method: GET
-        status_code: 200
-      register: website_test
-      retries: 3
-      delay: 5
-      tags: ['verification']
-
     - name: Display deployment success message
       debug:
         msg: |
@@ -208,32 +198,3 @@
           
           Deployment timestamp: {{ ansible_date_time.iso8601 }}
       tags: ['verification']
-
-    # Cleanup and Maintenance
-    # Clean up unnecessary files to save disk space
-    - name: Clean npm cache
-      npm:
-        path: "{{ site_directory }}"
-        state: present
-        ci: yes
-      become: yes
-      become_user: "{{ deploy_user }}"
-      tags: ['cleanup']
-
-    - name: Remove development dependencies to save space
-      file:
-        path: "{{ site_directory }}/node_modules"
-        state: absent
-      become: yes
-      when: ansible_env.KEEP_NODE_MODULES is not defined
-      tags: ['cleanup', 'optional']
-
-    - name: Reinstall only production dependencies
-      npm:
-        path: "{{ site_directory }}"
-        state: present
-        production: yes
-      become: yes
-      become_user: "{{ deploy_user }}"
-      when: ansible_env.KEEP_NODE_MODULES is not defined
-      tags: ['cleanup', 'optional']
