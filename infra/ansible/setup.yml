@@ -218,7 +218,15 @@
       notify: restart caddy
       tags: ['caddy', 'configuration']
 
-    # Create a simple placeholder page until deployment
+    # Create dist directory and placeholder page until deployment
+    - name: Create dist directory
+      file:
+        path: "{{ site_directory }}/dist"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: root
+        mode: '0755'
+
     - name: Create placeholder index.html
       copy:
         dest: "{{ site_directory }}/dist/index.html"
