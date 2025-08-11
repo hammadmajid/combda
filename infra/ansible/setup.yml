@@ -184,9 +184,8 @@
               # Enable file server for static content
               file_server
               
-              # Handle client-side routing (for SPAs)
-              try_files {path} /index.html
-              
+               # Handle directory-based routing for Astro static site
+               try_files {path} {path}/index.html /index.html              
               # Security headers for better protection
               header {
                   # Prevent clickjacking
