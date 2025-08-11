@@ -14,7 +14,7 @@
     site_user: "{{ ansible_user }}"                    # User who will own the website files
     site_directory: "/var/www/combda"                  # Where the built site will be stored
     caddy_config_dir: "/etc/caddy"                     # Caddy configuration directory
-    node_version: "18"                                 # Node.js version to install (LTS)
+    node_version: "20"                                 # Node.js version to install (LTS)
     
   tasks:
     # System Update and Security
