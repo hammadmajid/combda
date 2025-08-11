@@ -10,7 +10,7 @@
   hosts: all
   vars:
     # Deployment configuration - customize these variables as needed
-    repository_url: "https://github.com/{{ github_repository }}"  # Set via GitHub Actions
+    repository_url: "https://github.com/hammadmajid/combda.git"  # Set via GitHub Actions
     site_directory: "/var/www/combda"                             # Where the site lives on server
     build_directory: "{{ site_directory }}/dist"                 # Where built files go
     deploy_user: "{{ ansible_user }}"                            # User running the deployment
