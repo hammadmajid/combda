@@ -41,7 +41,6 @@
         dest: "{{ site_directory }}"
         version: main
         force: yes  # Overwrite any local changes
-      when: not git_repo_stat.stat.exists
       become: yes
       become_user: "{{ deploy_user }}"
       tags: ['git', 'clone']
