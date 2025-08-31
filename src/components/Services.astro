@@ -22,12 +22,6 @@ const iconMap = {
 };
 
 const services = (await getCollection("services"));
-
-function slugify(text: string) {
-    return text.toLowerCase()
-        .replace(/[^\w ]+/g, '')
-        .replace(/ +/g, '-');
-}
 ---
 
 <section id="services" class="py-20 bg-white">
@@ -80,7 +74,7 @@ function slugify(text: string) {
                             <!-- CTA -->
                             <div class="mt-6 text-center">
                                 <a
-                                        href={`/services/${slugify(data.title)}`}
+                                        href={`/services/${(service.slug)}`}
                                         class="inline-flex items-center text-teal-600 hover:text-teal-700 font-medium text-sm transition-colors duration-300"
                                 >
                                     Learn more
