@@ -1,7 +1,5 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import Navbar from "../components/Navbar.astro";
-import Footer from "../components/Footer.astro";
 import Send from "@lucide/astro/icons/send";
 ---
 
@@ -9,7 +7,6 @@ import Send from "@lucide/astro/icons/send";
         title="Contact Combda — Let's Talk"
         description="Get in touch with Combda for IT infrastructure, cloud migration, cybersecurity, DevOps consulting, and more. We'd love to learn about your needs."
 >
-    <Navbar/>
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div class="bg-white rounded-xl shadow-md p-6">
@@ -113,5 +110,4 @@ import Send from "@lucide/astro/icons/send";
             </aside>
         </section>
     </main>
-    <Footer/>
 </BaseLayout>
