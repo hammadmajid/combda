@@ -12,6 +12,7 @@
   "dependencies": {
     "@astrojs/check": "^0.9.4",
     "@lucide/astro": "^0.539.0",
+    "@tailwindcss/typography": "^0.5.16",
     "@tailwindcss/vite": "^4.1.11",
     "astro": "^5.12.9",
     "class-variance-authority": "^0.7.1",
@@ -19,8 +20,5 @@
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.11",
     "typescript": "^5.9.2"
-  },
-  "devDependencies": {
-    "@tailwindcss/typography": "^0.5.16"
   }
 }
