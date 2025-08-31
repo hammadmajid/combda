@@ -15,7 +15,8 @@ const {service} = Astro.props;
 const {Content} = await render(service);
 ---
 
-<BaseLayout>
+<BaseLayout title={service.data.title} description={service.data.description}
+            keywords={service.data.features.map(feature => feature.toLowerCase()).join(', ')}>
     <main class="py-12 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="prose">
             <h1>{service.data.title}</h1>
