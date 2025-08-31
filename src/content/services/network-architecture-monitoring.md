@@ -7,7 +7,4 @@ features:
   - Troubleshooting
   - Capacity Planning
 icon: wifi
-order: 4
-ctaLabel: Learn More
-ctaHref: "#contact"
 ---

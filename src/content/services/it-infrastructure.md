@@ -7,7 +7,4 @@ features:
   - Hardware Procurement
   - Performance Monitoring
 icon: server
-order: 1
-ctaLabel: Learn More
-ctaHref: "#contact"
 ---

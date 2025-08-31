@@ -7,7 +7,4 @@ features:
   - Containerization
   - Process Automation
 icon: cog
-order: 5
-ctaLabel: Learn More
-ctaHref: "#contact"
 ---

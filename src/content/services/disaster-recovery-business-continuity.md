@@ -7,7 +7,4 @@ features:
   - Business Continuity
   - Risk Assessment
 icon: database
-order: 6
-ctaLabel: Learn More
-ctaHref: "#contact"
 ---

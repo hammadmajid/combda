@@ -7,7 +7,4 @@ features:
   - Technology Upgrade
   - Staff Training
 icon: rotate-ccw
-order: 7
-ctaLabel: Learn More
-ctaHref: "#contact"
 ---

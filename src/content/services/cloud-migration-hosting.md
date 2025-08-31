@@ -7,7 +7,4 @@ features:
   - Cost Optimization
   - Scalability Planning
 icon: cloud
-order: 2
-ctaLabel: Learn More
-ctaHref: "#contact"
 ---
