@@ -6,103 +6,108 @@ import Wifi from "@lucide/astro/icons/wifi";
 import Cog from "@lucide/astro/icons/cog";
 import Database from "@lucide/astro/icons/database";
 import RotateCcw from "@lucide/astro/icons/rotate-ccw";
-import { getCollection } from "astro:content";
+import ArrowRight from "@lucide/astro/icons/chevron-right";
+import Calendar from "@lucide/astro/icons/calendar";
+
+import {getCollection} from "astro:content";
 
 const iconMap = {
-  "server": Server,
-  "cloud": CloudIcon,
-  "shield": ShieldIcon,
-  "wifi": Wifi,
-  "cog": Cog,
-  "database": Database,
-  "rotate-ccw": RotateCcw
+    "server": Server,
+    "cloud": CloudIcon,
+    "shield": ShieldIcon,
+    "wifi": Wifi,
+    "cog": Cog,
+    "database": Database,
+    "rotate-ccw": RotateCcw
 };
 
-const services = (await getCollection("services")).sort(
-  (a, b) => (a.data.order ?? 0) - (b.data.order ?? 0)
-);
+const services = (await getCollection("services"));
+
+function slugify(text: string) {
+    return text.toLowerCase()
+        .replace(/[^\w ]+/g, '')
+        .replace(/ +/g, '-');
+}
 ---
 
 <section id="services" class="py-20 bg-white">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <!-- Section Header -->
-    <div class="text-center mb-16">
-      <h2 class="text-4xl font-bold text-gray-800 mb-4 tracking-tight">
-        Our <span class="text-teal-600">IT Services</span>
-      </h2>
-      <p class="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-        Comprehensive IT solutions designed to accelerate your business growth and digital transformation journey.
-      </p>
-    </div>
-
-    <!-- Services Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {services.map((service) => {
-        const data = service.data;
-        const IconComponent = iconMap[data.icon] ?? Server;
-        return (
-          <div class="bg-teal-50 rounded-xl p-8 hover:shadow-lg transition-all duration-300 ease-in-out border border-teal-100 hover:border-teal-200">
-            <!-- Icon -->
-            <div class="flex justify-center mb-6">
-              <div class="w-16 h-16 bg-teal-600 rounded-xl flex items-center justify-center">
-                <IconComponent class="w-8 h-8 text-white" />
-              </div>
-            </div>
-
-            <!-- Title -->
-            <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">
-              {data.title}
-            </h3>
-
-            <!-- Description -->
-            <p class="text-gray-600 mb-6 leading-relaxed text-center">
-              {data.description}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Section Header -->
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold text-gray-800 mb-4 tracking-tight">
+                Our <span class="text-teal-600">IT Services</span>
+            </h2>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                Comprehensive IT solutions designed to accelerate your business growth and digital transformation
+                journey.
             </p>
+        </div>
 
-            <!-- Features -->
-            <ul class="space-y-2">
-              {data.features.map((feature) => (
-                <li class="flex items-center text-sm text-gray-700">
-                  <div class="w-2 h-2 bg-teal-600 rounded-full mr-3 flex-shrink-0"></div>
-                  {feature}
-                </li>
-              ))}
-            </ul>
+        <!-- Services Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {services.map((service) => {
+                const data = service.data;
+                const IconComponent = iconMap[data.icon] ?? Server;
+                return (
+                        <div class="bg-teal-50 rounded-xl p-8 hover:shadow-lg transition-all duration-300 ease-in-out border border-teal-100 hover:border-teal-200">
+                            <!-- Icon -->
+                            <div class="flex justify-center mb-6">
+                                <div class="w-16 h-16 bg-teal-600 rounded-xl flex items-center justify-center">
+                                    <IconComponent class="w-8 h-8 text-white"/>
+                                </div>
+                            </div>
 
-            <!-- CTA -->
-            <div class="mt-6 text-center">
-              <a
-                href={data.ctaHref}
-                class="inline-flex items-center text-teal-600 hover:text-teal-700 font-medium text-sm transition-colors duration-300"
-              >
-                {data.ctaLabel}
-                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                </svg>
-              </a>
+                            <!-- Title -->
+                            <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">
+                                {data.title}
+                            </h3>
+
+                            <!-- Description -->
+                            <p class="text-gray-600 mb-6 leading-relaxed text-center">
+                                {data.description}
+                            </p>
+
+                            <!-- Features -->
+                            <ul class="space-y-2">
+                                {data.features.map((feature) => (
+                                        <li class="flex items-center text-sm text-gray-700">
+                                            <div class="w-2 h-2 bg-teal-600 rounded-full mr-3 flex-shrink-0"></div>
+                                            {feature}
+                                        </li>
+                                ))}
+                            </ul>
+
+                            <!-- CTA -->
+                            <div class="mt-6 text-center">
+                                <a
+                                        href={`/services/${slugify(data.title)}`}
+                                        class="inline-flex items-center text-teal-600 hover:text-teal-700 font-medium text-sm transition-colors duration-300"
+                                >
+                                    Learn more
+                                    <ArrowRight/>
+                                </a>
+                            </div>
+                        </div>
+                );
+            })}
+        </div>
+
+        <!-- Call to Action -->
+        <div class="text-center mt-16">
+            <div class="bg-teal-600 rounded-xl p-8 text-white">
+                <h3 class="text-2xl font-bold mb-4">Ready to Transform Your IT Infrastructure?</h3>
+                <p class="text-teal-100 mb-6 max-w-2xl mx-auto">
+                    Our expert team is ready to assess your current setup and provide tailored solutions for your
+                    business needs.
+                </p>
+                <a
+                        href="/#contact"
+                        class="bg-white text-teal-600 px-8 py-3 rounded-xl font-medium hover:bg-teal-50 transition-all duration-300 ease-in-out inline-flex items-center gap-2"
+                >
+                    Schedule Consultation
+                    <Calendar/>
+                </a>
             </div>
-          </div>
-        );
-      })}
+        </div>
     </div>
-
-    <!-- Call to Action -->
-    <div class="text-center mt-16">
-      <div class="bg-teal-600 rounded-xl p-8 text-white">
-        <h3 class="text-2xl font-bold mb-4">Ready to Transform Your IT Infrastructure?</h3>
-        <p class="text-teal-100 mb-6 max-w-2xl mx-auto">
-          Our expert team is ready to assess your current setup and provide tailored solutions for your business needs.
-        </p>
-        <a
-          href="#contact"
-          class="bg-white text-teal-600 px-8 py-3 rounded-xl font-medium hover:bg-teal-50 transition-all duration-300 ease-in-out inline-flex items-center gap-2"
-        >
-          Schedule Consultation
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-          </svg>
-        </a>
-      </div>
-    </div>
-  </div>
 </section>
