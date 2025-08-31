@@ -1,0 +1,133 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import FileText from "@lucide/astro/icons/file-text";
+
+const updated = "August 31, 2025";
+---
+
+<BaseLayout title="Terms of Service • Combda"
+            description="Read the terms and conditions for using Combda's website and services.">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <section class="bg-white rounded-xl shadow-md border border-teal-200 p-8 md:p-12">
+            <div class="flex items-start gap-4 mb-6">
+                <div class="w-10 h-10 bg-teal-600 text-white rounded-xl flex items-center justify-center">
+                    <FileText class="w-5 h-5"/>
+                </div>
+                <div>
+                    <h1 class="text-4xl font-bold tracking-tight">Terms of Service</h1>
+                    <p class="text-gray-600 mt-2">Last updated: {updated}</p>
+                </div>
+            </div>
+
+            <div class="prose prose-teal max-w-none text-gray-700 leading-relaxed space-y-8">
+                <p>
+                    These Terms of Service ("Terms") govern your access to and use of the website located at
+                    <a href="https://combda.site"
+                       class="text-teal-700 underline underline-offset-4 hover:text-teal-800 transition-colors">combda.site</a>
+                    (the "Site") and any related services offered by Combda ("Combda", "we", "us", or "our"). By
+                    accessing or using the Site, you agree to be bound by these Terms.
+                </p>
+
+                <h2 class="text-2xl font-bold tracking-tight">1. Eligibility and Acceptance</h2>
+                <p>
+                    By using the Site, you represent that you are at least 18 years old and have the legal capacity to
+                    enter into these Terms. If you are using the Site on behalf of a business, you represent that you
+                    have authority to bind that business.
+                </p>
+
+                <h2 class="text-2xl font-bold tracking-tight">2. Services</h2>
+                <p>
+                    Combda provides IT services, including infrastructure setup and management, cloud migration and
+                    hosting, cybersecurity and compliance, network architecture and monitoring, DevOps consulting,
+                    disaster recovery, and legacy modernization. Specific engagements are governed by separate written
+                    agreements or Statements of Work (SOWs).
+                </p>
+
+                <h2 class="text-2xl font-bold tracking-tight">3. Accounts and Communications</h2>
+                <p>
+                    You may contact us through the Site without creating an account. If accounts or portals are provided
+                    for clients, you are responsible for maintaining the confidentiality of your credentials and for all
+                    activities under your account.
+                </p>
+
+                <h2 class="text-2xl font-bold tracking-tight">4. Fees and Payment</h2>
+                <p>
+                    Unless otherwise stated in a separate agreement, any fees for services will be outlined in an
+                    applicable proposal or SOW and are payable according to the terms therein.
+                </p>
+
+                <h2 class="text-2xl font-bold tracking-tight">5. Acceptable Use</h2>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li>Do not use the Site in any manner that violates applicable laws or regulations.</li>
+                    <li>Do not attempt to interfere with the proper functioning of the Site or circumvent security
+                        measures.
+                    </li>
+                    <li>Do not upload or transmit malicious code.</li>
+                </ul>
+
+                <h2 class="text-2xl font-bold tracking-tight">6. Intellectual Property</h2>
+                <p>
+                    The Site and its original content, features, and functionality are owned by Combda and are protected
+                    by intellectual property laws. You may not reproduce, distribute, modify, or create derivative works
+                    without our prior written consent.
+                </p>
+
+                <h2 class="text-2xl font-bold tracking-tight">7. Confidentiality</h2>
+                <p>
+                    In the course of evaluating or receiving our services, you may share confidential information. We
+                    will treat such information as confidential and use it only for the purpose for which it was
+                    disclosed, consistent with any applicable agreement.
+                </p>
+
+                <h2 class="text-2xl font-bold tracking-tight">8. Warranties and Disclaimers</h2>
+                <p>
+                    THE SITE IS PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS. TO THE MAXIMUM EXTENT PERMITTED BY LAW,
+                    COMBDA DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING IMPLIED WARRANTIES OF
+                    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+                </p>
+
+                <h2 class="text-2xl font-bold tracking-tight">9. Limitation of Liability</h2>
+                <p>
+                    TO THE FULLEST EXTENT PERMITTED BY LAW, IN NO EVENT WILL COMBDA BE LIABLE FOR ANY INDIRECT,
+                    INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS OR REVENUES, WHETHER
+                    INCURRED DIRECTLY OR INDIRECTLY, OR ANY LOSS OF DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES,
+                    RESULTING FROM YOUR USE OF THE SITE.
+                </p>
+
+                <h2 class="text-2xl font-bold tracking-tight">10. Indemnification</h2>
+                <p>
+                    You agree to defend, indemnify, and hold harmless Combda and its officers, directors, employees, and
+                    agents from and against any claims, liabilities, damages, losses, and expenses arising out of or in
+                    any way connected with your use of the Site or violation of these Terms.
+                </p>
+
+                <h2 class="text-2xl font-bold tracking-tight">11. Termination</h2>
+                <p>
+                    We may suspend or terminate your access to the Site at any time, with or without notice, for conduct
+                    that we believe violates these Terms or is otherwise harmful to other users, us, or third parties.
+                </p>
+
+                <h2 class="text-2xl font-bold tracking-tight">12. Governing Law</h2>
+                <p>
+                    These Terms will be governed by and construed in accordance with the laws of the jurisdiction in
+                    which Combda operates, without regard to its conflict of law provisions.
+                </p>
+
+                <h2 class="text-2xl font-bold tracking-tight">13. Changes to These Terms</h2>
+                <p>
+                    We may update these Terms from time to time. The updated version will be indicated by an updated
+                    "Last updated" date and will be effective as soon as it is accessible.
+                </p>
+
+                <h2 class="text-2xl font-bold tracking-tight">14. Contact Us</h2>
+                <p>
+                    For questions about these Terms, contact us at <a href="mailto:info@combda.site"
+                                                                      class="text-teal-700 underline underline-offset-4 hover:text-teal-800 transition-colors">info@combda.site</a>
+                    or via our <a href="/contact"
+                                  class="text-teal-700 underline underline-offset-4 hover:text-teal-800 transition-colors">Contact</a>
+                    page.
+                </p>
+            </div>
+        </section>
+    </main>
+</BaseLayout>
