@@ -2,16 +2,16 @@
 import Menu from "@lucide/astro/icons/menu";
 ---
 
-<nav class="bg-white shadow-md border-b border-teal-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<nav class="bg-gray-950 border-b border-gray-700">
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
             <!-- Logo and Company Name -->
             <div class="flex items-center">
                 <a href="/" class="flex items-center space-x-3">
-                    <div class="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center">
-                        <span class="text-white font-bold text-lg">C</span>
+                    <div class="w-8 h-8 bg-orange-600 rounded-none flex items-center justify-center">
+                        <span class="text-black font-bold text-lg">C</span>
                     </div>
-                    <span class="text-xl font-bold text-gray-800">Combda</span>
+                    <span class="text-2xl font-bold text-gray-100 uppercase tracking-tight">COMBDA</span>
                 </a>
             </div>
 
@@ -19,20 +19,20 @@ import Menu from "@lucide/astro/icons/menu";
             <div class="hidden md:block">
                 <div class="ml-10 flex items-baseline space-x-8">
                     <a href="/#services"
-                       class="text-gray-700 hover:text-teal-600 px-3 py-2 text-sm font-medium transition-colors duration-300">
-                        Services
+                       class="text-gray-200 hover:text-orange-600 underline px-3 py-2 text-sm font-medium transition-colors duration-150">
+                        SERVICES
                     </a>
                     <a href="/about"
-                       class="text-gray-700 hover:text-teal-600 px-3 py-2 text-sm font-medium transition-colors duration-300">
-                        About
+                       class="text-gray-200 hover:text-orange-600 underline px-3 py-2 text-sm font-medium transition-colors duration-150">
+                        ABOUT
                     </a>
                     <a href="/#faq"
-                       class="text-gray-700 hover:text-teal-600 px-3 py-2 text-sm font-medium transition-colors duration-300">
+                       class="text-gray-200 hover:text-orange-600 underline px-3 py-2 text-sm font-medium transition-colors duration-150">
                         FAQ
                     </a>
                     <a href="/contact"
-                       class="bg-teal-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-teal-700 transition-all duration-300 ease-in-out">
-                        Contact Us
+                       class="bg-orange-700 text-black border border-orange-800 px-4 py-2 rounded-none text-sm font-medium hover:bg-orange-800 hover:text-white transition-colors duration-150">
+                        CONTACT US
                     </a>
                 </div>
             </div>
@@ -41,7 +41,7 @@ import Menu from "@lucide/astro/icons/menu";
             <div class="md:hidden">
                 <button
                         type="button"
-                        class="bg-teal-50 inline-flex items-center justify-center p-2 rounded-xl text-teal-600 hover:text-teal-700 hover:bg-teal-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-teal-400"
+                        class="bg-gray-900 inline-flex items-center justify-center p-2 rounded-none text-orange-600 hover:text-orange-800 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-500"
                         aria-controls="mobile-menu"
                         aria-expanded="false"
                         id="mobile-menu-button"
@@ -56,19 +56,19 @@ import Menu from "@lucide/astro/icons/menu";
 
     <!-- Mobile menu -->
     <div class="md:hidden hidden" id="mobile-menu">
-        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t border-teal-200">
-            <a href="/#services" class="text-gray-700 hover:text-teal-600 block px-3 py-2 text-base font-medium">
-                Services
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-gray-950 border-t border-gray-700">
+            <a href="/#services" class="text-gray-200 hover:text-orange-600 underline block px-3 py-2 text-base font-medium">
+                SERVICES
             </a>
-            <a href="/about" class="text-gray-700 hover:text-teal-600 block px-3 py-2 text-base font-medium">
-                About
+            <a href="/about" class="text-gray-200 hover:text-orange-600 underline block px-3 py-2 text-base font-medium">
+                ABOUT
             </a>
-            <a href="/#faq" class="text-gray-700 hover:text-teal-600 block px-3 py-2 text-base font-medium">
+            <a href="/#faq" class="text-gray-200 hover:text-orange-600 underline block px-3 py-2 text-base font-medium">
                 FAQ
             </a>
             <a href="/contact"
-               class="bg-teal-600 text-white block px-3 py-2 rounded-xl text-base font-medium hover:bg-teal-700 transition-all duration-300 ease-in-out mx-3 my-2">
-                Contact Us
+               class="bg-orange-700 text-black border border-orange-800 block px-3 py-2 rounded-none text-base font-medium hover:bg-orange-800 hover:text-white transition-colors duration-150 mx-3 my-2">
+                CONTACT US
             </a>
         </div>
     </div>

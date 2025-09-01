@@ -9,39 +9,39 @@ import {getCollection} from "astro:content";
 const services = (await getCollection("services"));
 ---
 
-<footer id="contact" class="bg-gray-800 text-white py-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<footer id="contact" class="bg-gray-950 text-gray-100 py-16 border-t border-gray-700">
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
 
             <!-- Company Info -->
             <div class="lg:col-span-2">
                 <div class="flex items-center mb-6">
-                    <div class="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center mr-4">
-                        <span class="text-white font-bold text-xl">C</span>
+                    <div class="w-10 h-10 bg-orange-600 rounded-none flex items-center justify-center mr-4">
+                        <span class="text-black font-bold text-xl">C</span>
                     </div>
-                    <span class="text-2xl font-bold">Combda</span>
+                    <span class="text-2xl font-bold uppercase tracking-tight">COMBDA</span>
                 </div>
-                <p class="text-gray-300 mb-6 leading-relaxed max-w-md">
+                <p class="text-gray-300 mb-6 leading-snug max-w-md">
                     Your trusted partner for comprehensive IT solutions. We transform businesses through innovative
                     technology services, from infrastructure setup to cloud migration and cybersecurity.
                 </p>
                 <div class="space-y-3">
                     <div class="flex items-center">
-                        <AtSign class="w-5 h-5 text-teal-400 mr-3"/>
+                        <AtSign class="w-5 h-5 text-orange-600 mr-3"/>
                         <a href="mailto:info@combda.site"
-                           class="text-gray-300 hover:text-teal-400 transition-colors duration-300">
+                           class="text-gray-300 hover:text-orange-600 underline transition-colors duration-150">
                             info@combda.site
                         </a>
                     </div>
                     <div class="flex items-center">
-                        <PhoneIcon class="w-5 h-5 text-teal-400 mr-3"/>
+                        <PhoneIcon class="w-5 h-5 text-orange-600 mr-3"/>
                         <a href="tel:+1234567890"
-                           class="text-gray-300 hover:text-teal-400 transition-colors duration-300">
+                           class="text-gray-300 hover:text-orange-600 underline transition-colors duration-150">
                             +1 (234) 567-8900
                         </a>
                     </div>
                     <div class="flex items-center">
-                        <MapPin class="w-5 h-5 text-teal-400 mr-3"/>
+                        <MapPin class="w-5 h-5 text-orange-600 mr-3"/>
                         <span class="text-gray-300">
               Remote & On-site Services Available
             </span>
@@ -51,13 +51,13 @@ const services = (await getCollection("services"));
 
             <!-- Services -->
             <div>
-                <h3 class="text-lg font-semibold mb-6 text-teal-400">Our Services</h3>
+                <h3 class="text-lg font-bold mb-6 text-orange-600 uppercase tracking-tight">OUR SERVICES</h3>
                 <ul class="space-y-3">
                     {services.map((service) => {
                         return (
                                 <li>
                                     <a href={`/services/${service.slug}`}
-                                       class="text-gray-300 hover:text-teal-400 transition-colors duration-300 text-sm">
+                                       class="text-gray-300 hover:text-orange-600 underline transition-colors duration-150 text-sm">
                                         {service.data.title}
                                     </a>
                                 </li>
@@ -68,36 +68,36 @@ const services = (await getCollection("services"));
 
             <!-- Quick Links -->
             <div>
-                <h3 class="text-lg font-semibold mb-6 text-teal-400">Quick Links</h3>
+                <h3 class="text-lg font-bold mb-6 text-orange-600 uppercase tracking-tight">QUICK LINKS</h3>
                 <ul class="space-y-3">
                     <li>
                         <a href="/#services"
-                           class="text-gray-300 hover:text-teal-400 transition-colors duration-300 text-sm">
-                            Our Services
+                           class="text-gray-300 hover:text-orange-600 underline transition-colors duration-150 text-sm">
+                            OUR SERVICES
                         </a>
                     </li>
                     <li>
                         <a href="/#faq"
-                           class="text-gray-300 hover:text-teal-400 transition-colors duration-300 text-sm">
+                           class="text-gray-300 hover:text-orange-600 underline transition-colors duration-150 text-sm">
                             FAQ
                         </a>
                     </li>
                     <li>
                         <a href="/contact"
-                           class="text-gray-300 hover:text-teal-400 transition-colors duration-300 text-sm">
-                            Contact Us
+                           class="text-gray-300 hover:text-orange-600 underline transition-colors duration-150 text-sm">
+                            CONTACT US
                         </a>
                     </li>
                     <li>
                         <a href="/privacy"
-                           class="text-gray-300 hover:text-teal-400 transition-colors duration-300 text-sm">
-                            Privacy Policy
+                           class="text-gray-300 hover:text-orange-600 underline transition-colors duration-150 text-sm">
+                            PRIVACY POLICY
                         </a>
                     </li>
                     <li>
                         <a href="/terms"
-                           class="text-gray-300 hover:text-teal-400 transition-colors duration-300 text-sm">
-                            Terms of Service
+                           class="text-gray-300 hover:text-orange-600 underline transition-colors duration-150 text-sm">
+                            TERMS OF SERVICE
                         </a>
                     </li>
                 </ul>
@@ -108,12 +108,12 @@ const services = (await getCollection("services"));
         <div class="mt-16 pt-8 border-t border-gray-700">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                 <div>
-                    <h3 class="text-xl font-bold mb-2 text-teal-400">Ready to discuss your project?</h3>
-                    <p class="text-gray-300">Reach out and our team will get back to you promptly.</p>
+                    <h3 class="text-2xl font-bold mb-2 text-orange-600 uppercase tracking-tight">READY TO DISCUSS YOUR PROJECT?</h3>
+                    <p class="text-gray-300 leading-snug">Reach out and our team will get back to you promptly.</p>
                 </div>
                 <a href="/contact"
-                   class="bg-teal-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-teal-700 transition-all duration-300 ease-in-out inline-flex items-center gap-2">
-                    Contact Us
+                   class="bg-orange-700 text-black border border-orange-800 px-6 py-3 rounded-none font-medium hover:bg-orange-800 hover:text-white transition-colors duration-150 inline-flex items-center gap-2">
+                    CONTACT US
                     <Send class="w-4 h-4"/>
                 </a>
             </div>
@@ -122,14 +122,14 @@ const services = (await getCollection("services"));
         <!-- Bottom Bar -->
         <div class="mt-12 pt-8 border-t border-gray-700 flex flex-col sm:flex-row justify-between items-center">
             <p class="text-gray-400 text-sm">
-                © 2025 Combda. All rights reserved.
+                © 2025 COMBDA. ALL RIGHTS RESERVED.
             </p>
             <div class="flex items-center space-x-6 mt-4 sm:mt-0">
-                <a href="/privacy" class="text-gray-400 hover:text-teal-400 text-sm transition-colors duration-300">
-                    Privacy Policy
+                <a href="/privacy" class="text-gray-400 hover:text-orange-600 underline text-sm transition-colors duration-150">
+                    PRIVACY POLICY
                 </a>
-                <a href="/terms" class="text-gray-400 hover:text-teal-400 text-sm transition-colors duration-300">
-                    Terms of Service
+                <a href="/terms" class="text-gray-400 hover:text-orange-600 underline text-sm transition-colors duration-150">
+                    TERMS OF SERVICE
                 </a>
             </div>
         </div>
