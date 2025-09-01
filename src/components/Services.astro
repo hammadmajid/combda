@@ -29,7 +29,8 @@ const services = (await getCollection("services"));
         <!-- Section Header -->
         <div class="text-center mb-16 space-y-6">
             <h2 class="text-4xl font-bold text-gray-100 tracking-tight uppercase">
-                OUR <span class="text-orange-600">IT SERVICES</span>
+                <span class="text-orange-600">admin@combda:~$</span> ls -la
+                <span class="text-orange-600">IT_SERVICES/</span>
             </h2>
             <p class="text-lg text-gray-200 max-w-3xl mx-auto leading-snug">
                 Comprehensive IT solutions designed to accelerate your business growth and digital transformation
@@ -67,8 +68,8 @@ const services = (await getCollection("services"));
                             <!-- Features -->
                             <ul class="space-y-2 mb-6">
                                 {data.features.map((feature) => (
-                                        <li class="flex items-start text-sm text-gray-300 leading-snug">
-                                            <div class="w-2 h-2 bg-orange-600 rounded-none mt-2 mr-3 flex-shrink-0"></div>
+                                        <li class="flex items-center text-sm text-gray-300 leading-snug">
+                                            <span class="text-orange-600 mt-2 mr-3 flex-shrink-0">├──</span>
                                             {feature}
                                         </li>
                                 ))}
@@ -96,7 +97,7 @@ const services = (await getCollection("services"));
                 </p>
                 <a
                         href="/contact"
-                        class="bg-orange-700 text-black border border-orange-800 px-8 py-3 rounded-none font-medium hover:bg-orange-800 hover:text-white transition-colors duration-150 inline-flex items-center gap-2"
+                        class="bg-orange-700 text-black border border-orange-800 px-8 py-3 rounded-none font-medium hover:bg-orange-800 hover:text-white transition-colors duration-150 inline-flex items-center gap-2 terminal-cursor"
                 >
                     SCHEDULE CONSULTATION
                     <Calendar class="w-5 h-5"/>
